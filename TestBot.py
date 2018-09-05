@@ -31,3 +31,4 @@ class BotHandler:
             last_update = get_result[-1]
         else:
             last_update = get_result[len(get_result)]
+
