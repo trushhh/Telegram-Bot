@@ -1,26 +1,33 @@
 import requests
+from time import sleep
+
 
 url = "https://api.telegram.org/bot643106124:AAGp9gejAaUfeb-ESbFH8kZQpFEwLMl5Pwk/"
 
 
-def get_updates_json(request):
-    response = requests.get(request + 'getUpdates')
-    return response.json()
+class BotHandler:
 
+    def __init__(self, token):
+        self.token - token
+        self.api_url = "https://api.telegram.org/bot{}/".format(token)
 
-def last_update(data):
-    results = data['result']
-    total_updates = len(results) - 1
-    return results[total_updates]
+    def get_updates(self, offset=None, timeout=30):
+        method = 'getUpdates'
+        params = {'timeout': timeout, 'offset': offset}
+        resp = requests.get(self.api_url + method, params)
+        result_json = resp.json()
+        return result_json
 
-def get_chat_id(update):
-    chat_id = update['message']['chat']['id']
-    return chat_id
+    def send_message(self, chat_id, text):
+        params = {'chat_id': chat_id, 'text': text}
+        method = 'sendMessage'
+        resp = requests.post(self.api_url + method, params)
+        return resp
 
-def send_mess(chat, text):
-    params = {'chat_id': chat, 'text': text}
-    response = requests.post(url + 'sendMessage', data=params)
-    return response
+    def get_last_update(self):
+        get_result = self.get_updates()
 
-chat_id = get_chat_id(last_update(get_updates_json(url)))
-send_mess(chat_id, 'привіт')
+        if len(get_result) > 0:
+            last_update = get_result[-1]
+        else:
+            last_update = get_result[len(get_result)]
